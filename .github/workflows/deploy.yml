@@ -1,0 +1,43 @@
+on:
+  release:
+    types: [created]
+
+name: Build
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+    
+    - run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')
+      shell: bash
+
+    - uses: mr-smithers-excellent/docker-build-push@v4
+      name: Build & push Docker image
+      with:
+        image: endeavorb2b/${{ REPOSITORY_NAME }}
+        tag:  ${{ steps.get_version.outputs.VERSION }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Get yarn global bin directory
+      id: yarn-bin
+      run: echo "::set-output name=dir::$(yarn global bin)"
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn global add @endeavorb2b/rancher2cli
+    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl service ${{ REPOSITORY_NAME }} "endeavorb2b/${{ REPOSITORY_NAME }}:${{ steps.get_version.outputs.VERSION }}"
+      env:
+        CI: 'true'
+        RANCHER_URL: ${{ secrets.RANCHER_URL }}
+        RANCHER_CLUSTERID: ${{ secrets.RANCHER_CLUSTERID }}
+        RANCHER_TOKEN: ${{ secrets.RANCHER_TOKEN }}
