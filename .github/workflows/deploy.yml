@@ -33,7 +33,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn global add @endeavorb2b/rancher2cli
-    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl service algolia-sync "${{ github.repository }}:${{ steps.get_version.outputs.VERSION }}"
+    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl basecms-service algolia-sync "${{ github.repository }}:${{ steps.get_version.outputs.VERSION }}"
       env:
         CI: 'true'
         RANCHER_URL: ${{ secrets.RANCHER_URL }}
