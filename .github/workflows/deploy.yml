@@ -20,7 +20,7 @@ jobs:
     - uses: mr-smithers-excellent/docker-build-push@v4
       name: Build & push Docker image
       with:
-        image: endeavorb2b/${{ github.repository }}
+        image: ${{ github.repository }}
         tag:  ${{ steps.get_version.outputs.VERSION }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
@@ -31,8 +31,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn global add @endeavorb2b/rancher2cli
-    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl service ${{ github.repository }} "endeavorb2b/${{ github.repository }}:${{ steps.get_version.outputs.VERSION }}"
+    - run: yarn global add @rancher2cli
+    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl service ${{ github.repository }} "${{ github.repository }}:${{ steps.get_version.outputs.VERSION }}"
       env:
         CI: 'true'
         RANCHER_URL: ${{ secrets.RANCHER_URL }}
