@@ -21,7 +21,7 @@ jobs:
       name: Build & push Docker image
       with:
         image: ${{ github.repository }}
-        tag:  ${{ steps.get_version.outputs.VERSION }}
+        tag:  v${{ steps.get_version.outputs.VERSION }}
         registry: docker.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
@@ -33,7 +33,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn global add @rancher2cli
-    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl service ${{ github.repository }} "${{ github.repository }}:${{ steps.get_version.outputs.VERSION }}"
+    - run: ${{ steps.yarn-bin.outputs.dir }}/r2 dl service algolia-sync "${{ github.repository }}:v${{ steps.get_version.outputs.VERSION }}"
       env:
         CI: 'true'
         RANCHER_URL: ${{ secrets.RANCHER_URL }}
