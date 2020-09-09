@@ -31,26 +31,22 @@ const query = message => (gql`
 const upsertToIndex = async (message) => {
   log(`Proccessing: ${message.id}`);
   const c = await apollo.queryFromBase(query(message), message.tenant);
-  try {
-    if (c.websiteSchedules) {
-      c.set(buildSections(c));
-    }
+  const content = c.content;
 
-    c.boost = boostResult(c);
+  c.content.boost = boostResult(content);
 
-    // Set unpublished date to 100 years in the future if it's null
-    if (!c.unpublished) {
-      c.unpublished = 4753607469000;
-    }
-
-    const index = client.initIndex(message.tenant);
-    await index.saveObject({
-      objectID: c.content.id,
-      ...c.content,
-    });
-  } catch (e) {
-    throw new Error(`Failed on: ${message.id}`);
+  // Set unpublished date to 100 years in the future if it's null
+  if (!content.unpublished) {
+    content.unpublished = 4753607469000;
   }
+
+  const index = client.initIndex(message.tenant);
+
+  await index.saveObject({
+    objectID: content.id,
+    sections: buildSections(content),
+    ...content,
+  });
 };
 
 module.exports = { upsertToIndex };
