@@ -25,6 +25,11 @@ const boostResult = (node) => {
 // Formats the object for Algolia's bulk update
 const buildObj = (nodes, tenant) => nodes.map((node) => {
   const content = node;
+
+  if (content.websiteSchedules) {
+    content.sections = buildSections(content)
+  }
+
   // Set unpublished date 100 years into the future.
   if (!content.unpublished) {
     content.unpublished = 4753607469000;
@@ -34,7 +39,7 @@ const buildObj = (nodes, tenant) => nodes.map((node) => {
     indexName: tenant,
     body: {
       objectID: content.id,
-      sections: buildSections(content),
+      sections: content.sections,
       ...content,
       boost: boostResult(content),
     },
