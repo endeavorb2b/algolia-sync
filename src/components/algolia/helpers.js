@@ -10,6 +10,12 @@ const buildSections = (c) => {
     const number = [name.split('>').length - 1];
     const key = `lev${number}`;
     const values = obj[key] || [];
+
+    // if on level 3 and more than 100 sections don't include them
+    if (number >= 2 && sectionsNames.length > 100) {
+      return obj;
+    }
+
     return { ...obj, [key]: [...values, name] };
   }, {});
 };
