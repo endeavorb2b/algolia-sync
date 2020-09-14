@@ -40,11 +40,16 @@ const upsertToIndex = async (message) => {
     content.unpublished = 4753607469000;
   }
 
+  if (content.websiteSchedules) {
+    const sections = buildSections(content)
+    delete content.websiteSchedules;
+  }
+
   const index = client.initIndex(message.tenant);
 
   await index.saveObject({
     objectID: content.id,
-    sections: buildSections(content),
+    sections,
     ...content,
   });
 };
