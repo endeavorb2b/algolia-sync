@@ -18,7 +18,7 @@ const query = message => (gql`
         unpublished
         updated
         status
-        websiteSchedules { section { hierarchy {fullName} }}
+        websiteSchedules { section { hierarchy { fullName } }}
         primaryImage { name filePath fileName src isLogo }
         primarySite{ host }
         name
@@ -34,6 +34,12 @@ const upsertToIndex = async (message) => {
   const content = c.content;
 
   c.content.boost = boostResult(content);
+
+  // Removed HTML tags
+  if (content.body) {
+    content.body = content.body.replace(/(<([^>]+)>)/gi, "");
+    content.body = content.body.substring(0, Math.min(content.body.length, 30000));
+  }
 
   // Set unpublished date to 100 years in the future if it's null
   if (!content.unpublished) {

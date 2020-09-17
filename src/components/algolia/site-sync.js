@@ -29,6 +29,7 @@ const query = gql`
           primarySite{ host }
           name
           teaser
+          body
         }
       }
     }

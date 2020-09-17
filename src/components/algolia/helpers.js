@@ -36,6 +36,12 @@ const buildObj = (nodes, tenant) => nodes.map((node) => {
     delete content.websiteSchedules;
   }
 
+  // Removed HTML tags
+  if (content.body) {
+    content.body = content.body.replace(/(<([^>]+)>)/gi, "");
+    content.body = content.body.substring(0, Math.min(content.body.length, 30000));
+  }
+
   // Set unpublished date 100 years into the future.
   if (!content.unpublished) {
     content.unpublished = 4753607469000;
