@@ -33,7 +33,6 @@ const upsertToIndex = async (message) => {
   log(`Proccessing: ${message.id}`);
   const c = await apollo.queryFromBase(query(message), message.tenant);
   const content = c.content;
-  console.log(content)
 
   c.content.boost = boostResult(content);
 
