@@ -29,9 +29,11 @@ const query = message => (gql`
 `);
 
 const upsertToIndex = async (message) => {
+  log(`Tenant: ${message.tenant}`);
   log(`Proccessing: ${message.id}`);
   const c = await apollo.queryFromBase(query(message), message.tenant);
   const content = c.content;
+  console.log(content)
 
   c.content.boost = boostResult(content);
 
@@ -47,7 +49,7 @@ const upsertToIndex = async (message) => {
   }
 
   if (content.websiteSchedules) {
-    const sections = buildSections(content)
+    content.sections = buildSections(content)
     delete content.websiteSchedules;
   }
 
@@ -55,7 +57,6 @@ const upsertToIndex = async (message) => {
 
   await index.saveObject({
     objectID: content.id,
-    sections,
     ...content,
   });
 };

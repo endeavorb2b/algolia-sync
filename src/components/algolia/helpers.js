@@ -51,7 +51,6 @@ const buildObj = (nodes, tenant) => nodes.map((node) => {
     indexName: tenant,
     body: {
       objectID: content.id,
-      sections: content.sections,
       ...content,
       boost: boostResult(content),
     },
